@@ -14,4 +14,10 @@ public interface UserService {
 
 	public void delete(UserModel userModel);
 
+	public void save(UserModel userModel);
+
+	public boolean existsByUsername(String username);
+
+	public boolean existsByEmail(String email);
+
 }
