@@ -33,7 +33,6 @@ public class UserDto {
 
 	@NotBlank(groups = UserView.RegistrationPost.class)
 	@Email(groups = UserView.RegistrationPost.class)
-	@Size(min = 4, max = 50)
 	@JsonView(UserView.RegistrationPost.class)
 	private String email;
 
