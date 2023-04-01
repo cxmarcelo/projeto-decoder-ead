@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import br.com.mcb.ead.authuser.models.UserModel;
+import br.com.mcb.ead.authuser.specifications.SpecificationTemplate.UserSpec;
 
 public interface UserService {
 
@@ -23,6 +24,6 @@ public interface UserService {
 
 	public boolean existsByEmail(String email);
 
-	public Page<UserModel> findAll(Pageable pageable);
+	public Page<UserModel> findAll(UserSpec spec, Pageable pageable);
 
 }

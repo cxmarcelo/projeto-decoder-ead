@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.mcb.ead.authuser.dtos.UserDto;
 import br.com.mcb.ead.authuser.models.UserModel;
 import br.com.mcb.ead.authuser.services.UserService;
+import br.com.mcb.ead.authuser.specifications.SpecificationTemplate;
 
 @RestController
 @CrossOrigin(originPatterns = "*", maxAge = 3600)
@@ -37,8 +38,8 @@ public class UserController {
 	private UserService userService;
 
 	@GetMapping
-	public ResponseEntity<Page<UserModel>> getAllUsers(@PageableDefault(page = 0, size = 10, sort = "userId", direction = Sort.Direction.ASC) Pageable pageable ) {
-		Page<UserModel> userModelPage = userService.findAll(pageable);
+	public ResponseEntity<Page<UserModel>> getAllUsers(SpecificationTemplate.UserSpec spec, @PageableDefault(page = 0, size = 10, sort = "userId", direction = Sort.Direction.ASC) Pageable pageable ) {
+		Page<UserModel> userModelPage = userService.findAll(spec, pageable);
 		return ResponseEntity.status(HttpStatus.OK).body(userModelPage);
 	}
 
