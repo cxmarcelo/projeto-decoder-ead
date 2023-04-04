@@ -29,6 +29,10 @@ import br.com.mcb.ead.authuser.models.UserModel;
 import br.com.mcb.ead.authuser.services.UserService;
 import br.com.mcb.ead.authuser.specifications.SpecificationTemplate;
 
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;;
+
 @RestController
 @CrossOrigin(originPatterns = "*", maxAge = 3600)
 @RequestMapping("/users")
@@ -40,11 +44,19 @@ public class UserController {
 	@GetMapping
 	public ResponseEntity<Page<UserModel>> getAllUsers(SpecificationTemplate.UserSpec spec, @PageableDefault(page = 0, size = 10, sort = "userId", direction = Sort.Direction.ASC) Pageable pageable ) {
 		Page<UserModel> userModelPage = userService.findAll(spec, pageable);
+		
+		
+		if(!userModelPage.isEmpty()) {
+			for(UserModel user: userModelPage.toList()) {
+				user.add(linkTo(methodOn(UserController.class).getOneUser(user.getUserId())).withSelfRel());;
+			}
+		}
+		
 		return ResponseEntity.status(HttpStatus.OK).body(userModelPage);
 	}
 
 	@GetMapping("/{userId}")
-	public ResponseEntity<Object> getAllUsers(@PathVariable UUID userId) {
+	public ResponseEntity<Object> getOneUser(@PathVariable UUID userId) {
 		Optional<UserModel> userModelOptional = userService.findById(userId);
 		if(!userModelOptional.isPresent()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");

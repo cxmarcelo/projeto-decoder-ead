@@ -17,15 +17,19 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import br.com.mcb.ead.authuser.enums.UserStatus;
 import br.com.mcb.ead.authuser.enums.UserType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "TB_USERS")
-public class UserModel implements Serializable {
+public class UserModel extends RepresentationModel<UserModel> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
