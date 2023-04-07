@@ -6,13 +6,16 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
@@ -39,5 +42,9 @@ public class LessonModel implements Serializable {
 	@Column(nullable = false)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-YYYY HH:mm:ss")
 	private LocalDateTime creationDate;
+
+	@JsonProperty(access= JsonProperty.Access.WRITE_ONLY)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	private ModuleModel module;
 
 }
