@@ -68,8 +68,12 @@ public class CourseModel implements Serializable {
 
 	//NÃO VEM EM CONSULTAS GET
 	@JsonProperty(access= JsonProperty.Access.WRITE_ONLY)
+	//@OneToMany(mappedBy = "course", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+	//cascada apaga todos modulos vinculados // orphaRemoval apaga modulos que nao tem um course associado
 	//SE FOR JOIN ele vai trazer como EAGER / se nao definir o default é JOIN (porem respeita o lazy)
+	//@OnDelete(action = OnDeleteAction.CASCADE)
+	//esse onDelete joga a responsabilidade pro banco de dados apagar
 	@Fetch(FetchMode.SUBSELECT)
 	private Set<ModuleModel> modules;
 
