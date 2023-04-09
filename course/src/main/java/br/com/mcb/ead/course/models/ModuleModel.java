@@ -27,7 +27,7 @@ import lombok.Data;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
-@Table(name = "TB_MODELS")
+@Table(name = "TB_MODULES")
 public class ModuleModel implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -43,7 +43,7 @@ public class ModuleModel implements Serializable {
 
 	@Column(nullable = false)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-YYYY HH:mm:ss")
-	private LocalDateTime creationTime;
+	private LocalDateTime creationDate;
 
 	@JsonProperty(access= JsonProperty.Access.WRITE_ONLY)
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)

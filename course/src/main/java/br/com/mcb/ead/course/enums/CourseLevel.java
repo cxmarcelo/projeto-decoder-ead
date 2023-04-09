@@ -2,7 +2,7 @@ package br.com.mcb.ead.course.enums;
 
 public enum CourseLevel {
 
-	BEGINER,
+	BEGINNER,
 	INTERMEDIARY,
 	ADVANCED,
 	;

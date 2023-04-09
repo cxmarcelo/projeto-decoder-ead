@@ -1,10 +1,13 @@
 package br.com.mcb.ead.course.services.impl;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.mcb.ead.course.models.CourseModel;
 import br.com.mcb.ead.course.models.LessonModel;
@@ -29,7 +32,9 @@ public class CourseServiceImpl implements CourseService {
 	@Transactional
 	@Override
 	public void delete(CourseModel courseModel) {
+		System.out.println("Testando antes de chamar");
 		List<ModuleModel> moduleModelList = moduleRepository.findAllModulesIntoCourse(courseModel.getCourseId());
+		System.out.println("Testando depois de chamar");
 
 		if(!moduleModelList.isEmpty()) {
 
@@ -45,6 +50,21 @@ public class CourseServiceImpl implements CourseService {
 		}
 
 		courseRepository.delete(courseModel);
+	}
+
+	@Override
+	public CourseModel save(CourseModel courseModel) {
+		return courseRepository.save(courseModel);
+	}
+
+	@Override
+	public Optional<CourseModel> findById(UUID courseId) {
+		return courseRepository.findById(courseId);
+	}
+
+	@Override
+	public List<CourseModel> findAll() {
+		return courseRepository.findAll();
 	}
 
 }
