@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.mcb.ead.course.dtos.CourseDto;
 import br.com.mcb.ead.course.dtos.ModuleDto;
 import br.com.mcb.ead.course.models.CourseModel;
 import br.com.mcb.ead.course.models.ModuleModel;
@@ -55,7 +54,7 @@ public class ModuleController {
 	}
 
 	@DeleteMapping("/courses/{courseId}/modules/{moduleId}")
-	public ResponseEntity<Object> deleteCourse(@PathVariable UUID courseId, @PathVariable UUID moduleId) {
+	public ResponseEntity<Object> deleteModule(@PathVariable UUID courseId, @PathVariable UUID moduleId) {
 		Optional<ModuleModel> moduleModelOptional = moduleService.findModuleIntoCourse(courseId, moduleId);
 
 		if(moduleModelOptional.isEmpty()) {
@@ -67,7 +66,7 @@ public class ModuleController {
 	}
 
 	@PutMapping("/courses/{courseId}/modules/{moduleId}")
-	public ResponseEntity<Object> updateCourse(@PathVariable UUID courseId, @PathVariable UUID moduleId, @RequestBody @Valid ModuleDto moduleDto) {
+	public ResponseEntity<Object> updateModule(@PathVariable UUID courseId, @PathVariable UUID moduleId, @RequestBody @Valid ModuleDto moduleDto) {
 		Optional<ModuleModel> moduleModelOptional = moduleService.findModuleIntoCourse(courseId, moduleId);
 
 		if(moduleModelOptional.isEmpty()) {
