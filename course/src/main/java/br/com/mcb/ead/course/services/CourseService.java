@@ -1,8 +1,11 @@
 package br.com.mcb.ead.course.services;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import br.com.mcb.ead.course.models.CourseModel;
 
@@ -14,6 +17,6 @@ public interface CourseService {
 
 	public Optional<CourseModel> findById(UUID courseId);
 
-	public List<CourseModel> findAll();
+	public Page<CourseModel> findAll(Specification<CourseModel> spec, Pageable pageable);
 
 }
