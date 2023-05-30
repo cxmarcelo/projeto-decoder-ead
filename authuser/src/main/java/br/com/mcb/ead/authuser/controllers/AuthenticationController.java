@@ -5,8 +5,6 @@ import java.time.ZoneId;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +22,9 @@ import br.com.mcb.ead.authuser.enums.UserStatus;
 import br.com.mcb.ead.authuser.enums.UserType;
 import br.com.mcb.ead.authuser.models.UserModel;
 import br.com.mcb.ead.authuser.services.UserService;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @RestController
 @CrossOrigin(originPatterns = "*", maxAge = 3600)
 @RequestMapping("/auth")
@@ -32,21 +32,21 @@ public class AuthenticationController {
 
 	@Autowired
 	private UserService userService;
-	
-	Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
-
 
 	@PostMapping("/signup")
 	public ResponseEntity<Object> registerUser(
 			@RequestBody @Validated(UserDto.UserView.RegistrationPost.class) @JsonView(UserDto.UserView.RegistrationPost.class) UserDto userDto) {
+		log.debug("POST registerUser userDto received {} ", userDto.toString());
 		if(userService.existsByUsername(userDto.getUsername())) {
+			log.warn("Username {} is Already Taken!", userDto.getUsername());
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Username is Already Taken!");
 		}
-		
+
 		if(userService.existsByEmail(userDto.getEmail())) {
+			log.warn("Email {} is Already Taken!", userDto.getEmail());
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Email is Already Taken!");
 		}
-		
+
 		var userModel = new UserModel();
 		BeanUtils.copyProperties(userDto, userModel);
 		userModel.setUserStatus(UserStatus.ACTIVE);
@@ -55,16 +55,18 @@ public class AuthenticationController {
 		userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
 		userService.save(userModel);
 
+		log.debug("POST registerUser userModel saved {} ", userModel.toString());
+		log.info("User saved successfully userId {} ", userModel.getUserId());
 		return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
 	}
 
 	@GetMapping("/")
 	public String index() {
-		logger.trace("LOG TRACE"); // muito detalhado
-		logger.debug("LOG DEBUG"); //Desenvolvimento
-		logger.info("LOG INFO"); 
-		logger.warn("LOG WARN"); //Uso em avisos, nao chega a ser um erro
-		logger.error("LOG ERROR"); //Boa pratica utilizar em try catch
+		log.trace("LOG TRACE"); // muito detalhado
+		log.debug("LOG DEBUG"); //Desenvolvimento
+		log.info("LOG INFO"); 
+		log.warn("LOG WARN"); //Uso em avisos, nao chega a ser um erro
+		log.error("LOG ERROR"); //Boa pratica utilizar em try catch
 		return "Logging Spring Boot";
 	}
 }
