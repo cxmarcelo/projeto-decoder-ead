@@ -7,12 +7,12 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import br.com.mcb.ead.authuser.models.UserModel;
 import br.com.mcb.ead.authuser.repositories.UserRepository;
 import br.com.mcb.ead.authuser.services.UserService;
-import br.com.mcb.ead.authuser.specifications.SpecificationTemplate.UserSpec;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Page<UserModel> findAll(UserSpec spec, Pageable pageable) {
+	public Page<UserModel> findAll(Specification<UserModel> spec, Pageable pageable) {
 		return userRepository.findAll(spec, pageable);
 	}
 

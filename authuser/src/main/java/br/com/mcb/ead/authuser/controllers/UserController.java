@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.mcb.ead.authuser.dtos.UserDto;
@@ -43,8 +44,18 @@ public class UserController {
 	private UserService userService;
 
 	@GetMapping
-	public ResponseEntity<Page<UserModel>> getAllUsers(SpecificationTemplate.UserSpec spec, @PageableDefault(page = 0, size = 10, sort = "userId", direction = Sort.Direction.ASC) Pageable pageable ) {
-		Page<UserModel> userModelPage = userService.findAll(spec, pageable);
+	public ResponseEntity<Page<UserModel>> getAllUsers(SpecificationTemplate.UserSpec spec,
+			@PageableDefault(page = 0, size = 10, sort = "userId", direction = Sort.Direction.ASC) Pageable pageable,
+			@RequestParam(required = false) UUID courseId) {
+
+
+		Page<UserModel> userModelPage = null;
+
+		if(courseId != null) {
+			userModelPage = userService.findAll(SpecificationTemplate.userCourseId(courseId).and(spec), pageable);
+		} else {
+			userModelPage = userService.findAll(spec, pageable);
+		}
 
 
 		if(!userModelPage.isEmpty()) {
@@ -97,7 +108,7 @@ public class UserController {
 		userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
 		userService.save(userModel);
 
-		log.debug("PUT updateUser userModel saved {} ", userModel.toString());
+		log.debug("PUT updateUser userId saved {} ", userModel.getUserId());
 		log.info("User updated successfully userId {} ", userModel.getUserId());
 		return ResponseEntity.status(HttpStatus.OK).body(userModel);
 	}
@@ -139,7 +150,7 @@ public class UserController {
 		userModel.setImageUrl(userDto.getImageUrl());
 		userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
 		userService.save(userModel);
-		log.debug("PUT updateImage userModel saved {} ", userModel.toString());
+		log.debug("PUT updateImage userId saved {} ", userModel.getUserId());
 		log.info("Image updated successfully userId {} ", userModel.getUserId());
 		return ResponseEntity.status(HttpStatus.OK).body(userModel);
 	}

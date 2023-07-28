@@ -30,7 +30,7 @@ import lombok.Data;
 @Data
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Table(name = "tb_courses")
+@Table(name = "TB_COURSES ")
 public class CourseModel implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -77,5 +77,9 @@ public class CourseModel implements Serializable {
 	//esse onDelete joga a responsabilidade pro banco de dados apagar
 	@Fetch(FetchMode.SUBSELECT)
 	private Set<ModuleModel> modules;
+
+	@JsonProperty(access= JsonProperty.Access.WRITE_ONLY)
+	@OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+	private Set<CourseUserModel> coursesUsers;
 
 }
