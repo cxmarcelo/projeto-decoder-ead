@@ -18,10 +18,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpStatusCodeException;
 
-import br.com.mcb.ead.course.clients.CourseClient;
+import br.com.mcb.ead.course.clients.AuthUserClient;
 import br.com.mcb.ead.course.dtos.SubscriptionDto;
 import br.com.mcb.ead.course.dtos.UserDto;
+import br.com.mcb.ead.course.enums.UserStatus;
 import br.com.mcb.ead.course.models.CourseModel;
 import br.com.mcb.ead.course.models.CourseUserModel;
 import br.com.mcb.ead.course.services.CourseService;
@@ -34,7 +36,7 @@ import lombok.extern.log4j.Log4j2;
 public class CourseUserController {
 
 	@Autowired
-	private CourseClient courseClient;
+	private AuthUserClient authUserClient;
 
 	@Autowired
 	private CourseService courseService;
@@ -45,11 +47,12 @@ public class CourseUserController {
 	@GetMapping("/courses/{courseId}/users")
 	public ResponseEntity<Page<UserDto>> getAllUsersByCourse(@PageableDefault(page = 0, size = 10, sort = "userId", direction = Sort.Direction.ASC) Pageable pageable,
 			@PathVariable UUID courseId) {
-		return ResponseEntity.status(HttpStatus.OK).body(courseClient.getAllUsersByCourse(courseId, pageable));
+		return ResponseEntity.status(HttpStatus.OK).body(authUserClient.getAllUsersByCourse(courseId, pageable));
 	}
 
 	@PostMapping("courses/{courseId}/users/subscription")
 	public ResponseEntity<Object> saveSubscriptionUserInCourse(@PathVariable UUID courseId, @RequestBody @Valid SubscriptionDto subscriptionDto) {
+		ResponseEntity<UserDto> responseUser;
 		Optional<CourseModel> courseModelOptional = courseService.findById(courseId);
 
 		if(courseModelOptional.isEmpty()) {
@@ -61,9 +64,21 @@ public class CourseUserController {
 		}
 
 		//VERIFICAÇÃO DE USER
+		try {
+			responseUser = authUserClient.getOneUserById(subscriptionDto.getUserId());
+
+			if(responseUser.getBody().getUserStatus().equals(UserStatus.BLOCKED)) {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("User is blocked.");
+			}
+			
+		} catch (HttpStatusCodeException e) {
+			if(e.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+			}
+		}
 		CourseUserModel courseUserModel = courseUserService.save(courseModelOptional.get().convertToCourseUserModel(subscriptionDto.getUserId()));
 
-		return ResponseEntity.status(HttpStatus.CREATED).body("Subscription created successfully.");
+		return ResponseEntity.status(HttpStatus.CREATED).body(courseUserModel);
 	}
 
 }
