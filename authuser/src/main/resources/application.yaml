@@ -30,3 +30,8 @@ logging:
     #'[br.com.mcb.ead]': TRACE
     #root: DEBUG
     #org.springframework.web: DEBUG
+    
+ead:
+  api:
+    url:
+      course: 'http://localhost:8082'
