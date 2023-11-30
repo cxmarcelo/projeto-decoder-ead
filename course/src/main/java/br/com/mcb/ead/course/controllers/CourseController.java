@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +31,7 @@ import br.com.mcb.ead.course.dtos.CourseDto;
 import br.com.mcb.ead.course.models.CourseModel;
 import br.com.mcb.ead.course.services.CourseService;
 import br.com.mcb.ead.course.specifications.SpecificationTemplate;
+import br.com.mcb.ead.course.validation.CourseValidator;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -40,10 +42,19 @@ public class CourseController {
 
 	@Autowired
 	private CourseService courseService;
+	
+	@Autowired
+	private CourseValidator courseValidator;
 
 	@PostMapping
-	public ResponseEntity<Object> saveCouse(@RequestBody @Valid CourseDto courseDto) {
+	public ResponseEntity<Object> saveCouse(@RequestBody @Valid CourseDto courseDto, Errors errors) {
 		log.debug("POST saveCourse courseDto received {} ", courseDto.toString());
+		courseValidator.validate(courseDto, errors);
+		
+		if(errors.hasErrors()) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors.getAllErrors());
+		}
+		
 		var courseModel = new CourseModel();
 		BeanUtils.copyProperties(courseDto, courseModel);
 		courseModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
