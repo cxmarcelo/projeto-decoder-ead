@@ -10,7 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import br.com.mcb.ead.authuser.models.UserCourseModel;
 import br.com.mcb.ead.authuser.models.UserModel;
+import br.com.mcb.ead.authuser.repositories.UserCourseRepository;
 import br.com.mcb.ead.authuser.repositories.UserRepository;
 import br.com.mcb.ead.authuser.services.UserService;
 
@@ -19,6 +21,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private UserCourseRepository userCourseRepository;
 
 	@Override
 	public List<UserModel> findAll() {
@@ -32,6 +37,10 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void delete(UserModel userModel) {
+		List<UserCourseModel> userCourseModelList = userCourseRepository.findAllUserCourseIntoUser(userModel.getUserId());
+		if(!userCourseModelList.isEmpty()) {
+			userCourseRepository.deleteAll(userCourseModelList);
+		}
 		userRepository.delete(userModel);
 	}
 
