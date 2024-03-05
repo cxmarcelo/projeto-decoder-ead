@@ -56,7 +56,7 @@ public class AuthUserClient {
 		log.info("Ending request /users courseId: {}", courseId);
 		return result.getBody();
 	}
-	
+
 	public ResponseEntity<UserDto> getOneUserById(UUID userId) {
 		String url = REQUEST_URL_AUTHUSER + "/users/" + userId;
 		return restTemplate.exchange(url, HttpMethod.GET, null, UserDto.class);
@@ -67,8 +67,14 @@ public class AuthUserClient {
 		var courseUserDto = new CourseUserDto();
 		courseUserDto.setUserId(userId);
 		courseUserDto.setCourseId(courseId);
-		
+
 		restTemplate.postForObject(url, courseUserDto, String.class);
-		
+
 	}
+
+	public void deleteCourseInAuthUser(UUID courseId) {
+		String url = REQUEST_URL_AUTHUSER + "/users/courses/" + courseId;
+		restTemplate.exchange(url, HttpMethod.DELETE, null, String.class);
+	}
+
 }
